@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>OMIGA MANAGER</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<header class="top">
+  <div><div class="brand">OMIGA <span>MANAGER</span></div><small>إدارة ومتابعة أرباح المحل</small></div>
+  <button id="logoutBtn" class="btn ghost hidden">تسجيل خروج</button>
+</header>
+
+<main>
+  <section id="setup" class="panel hidden">
+    <h2>إعداد الاتصال السحابي</h2>
+    <p>ضع رابط مشروع Supabase ومفتاح Anon/Publishable في ملف <code>config.js</code>، ثم ارفع الملفات مرة أخرى.</p>
+    <p class="muted">لن تعمل المزامنة قبل إعداد قاعدة البيانات والحساب.</p>
+  </section>
+
+  <section id="auth" class="panel hidden">
+    <h2>أهلاً بيك في OMIGA</h2>
+    <p class="muted">سجّل دخولك أو أنشئ حساب الإدارة الخاص بالمحل.</p>
+    <label>البريد الإلكتروني<input id="email" type="email" autocomplete="email" placeholder="name@example.com"></label>
+    <label>كلمة المرور<input id="password" type="password" autocomplete="current-password" placeholder="6 أحرف على الأقل"></label>
+    <div class="actions">
+      <button id="loginBtn" class="btn primary">تسجيل الدخول</button>
+      <button id="signupBtn" class="btn secondary">إنشاء حساب</button>
+    </div>
+    <p id="authMsg" class="msg"></p>
+  </section>
+
+  <section id="app" class="hidden">
+    <div class="welcome"><div><h1>لوحة التحكم</h1><p id="todayText" class="muted"></p></div><span class="cloud">● متصل سحابياً</span></div>
+    <div class="stats">
+      <article class="stat"><small>إيرادات الشهر</small><strong id="revenue">0 ج.م</strong></article>
+      <article class="stat"><small>تكلفة المبيعات وقطع الغيار</small><strong id="costs">0 ج.م</strong></article>
+      <article class="stat"><small>المصروفات التشغيلية</small><strong id="expenses">0 ج.م</strong></article>
+      <article class="stat highlight"><small>صافي ربح الشهر</small><strong id="net">0 ج.م</strong></article>
+    </div>
+
+    <div class="layout">
+      <section class="panel">
+        <h2>تسجيل حركة جديدة</h2>
+        <div class="tabs">
+          <button class="tab active" data-kind="repair">صيانة</button>
+          <button class="tab" data-kind="sale">بيع منتج</button>
+          <button class="tab" data-kind="expense">مصروف</button>
+          <button class="tab" data-kind="purchase">شراء بضاعة</button>
+        </div>
+        <form id="entryForm">
+          <input type="hidden" id="kind" value="repair">
+          <label>البيان<input id="description" required maxlength="120" placeholder="مثال: تغيير أنالوج دراع PS4"></label>
+          <div class="two">
+            <label id="amountLabel">المبلغ المقبوض (جنيه)<input id="amount" type="number" min="0" step="0.01" required placeholder="0"></label>
+            <label id="costLabel">تكلفة القطع (جنيه)<input id="cost" type="number" min="0" step="0.01" value="0" placeholder="0"></label>
+          </div>
+          <label id="categoryLabel">التصنيف
+            <select id="category">
+              <option>صيانة أذرع</option><option>صيانة أجهزة</option><option>تنزيل ألعاب</option><option>أخرى</option>
+            </select>
+          </label>
+          <label>التاريخ<input id="entryDate" type="date" required></label>
+          <label>ملاحظات اختيارية<textarea id="notes" rows="2" placeholder="اسم العميل أو تفاصيل إضافية"></textarea></label>
+          <button class="btn primary full" type="submit">حفظ الحركة</button>
+          <p id="formMsg" class="msg"></p>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="sectionHead"><h2>حركات الشهر</h2><button id="csvBtn" class="btn small secondary">تصدير CSV</button></div>
+        <div class="filter"><label>الشهر<input id="monthFilter" type="month"></label></div>
+        <div class="tableWrap">
+          <table><thead><tr><th>التاريخ</th><th>النوع</th><th>البيان</th><th>المبلغ</th><th>التكلفة</th><th></th></tr></thead>
+          <tbody id="entriesBody"><tr><td colspan="6" class="muted center">لا توجد حركات مسجلة بعد</td></tr></tbody></table>
+        </div>
+        <p class="hint">المشتريات تُسجل كمخزون نقدي خارج، ولا تخصم من صافي الربح مباشرة. تكلفة البضاعة تُخصم عند تسجيل البيع.</p>
+      </section>
+    </div>
+  </section>
+</main>
+<footer>OMIGA STORE · بياناتك خاصة بحسابك</footer>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
